@@ -1,6 +1,12 @@
 #科学插件调整
 CONFIG_PACKAGE_luci-app-homeproxy=y
 #增加插件
+# PassWall
+CONFIG_PACKAGE_luci-app-passwall=y
+# AdGuardHome
+CONFIG_PACKAGE_adguardhome=y
+CONFIG_PACKAGE_luci-app-adguardhome=y
+
 CONFIG_PACKAGE_luci-app-autoreboot=y
 CONFIG_PACKAGE_luci-app-gecoosac=y
 CONFIG_PACKAGE_luci-app-mini-diskmanager=y
