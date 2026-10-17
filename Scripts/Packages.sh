@@ -1,16 +1,32 @@
 #!/bin/bash
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2026 VIKINGYFY
+set -euo pipefail
 
 #安装和更新软件包
 UPDATE_PACKAGE() {
 	local PKG_NAME=$1
 	local PKG_REPO=$2
 	local PKG_BRANCH=$3
-	local PKG_SPECIAL=$4
-	local PKG_LIST=("$PKG_NAME" $5)  # 第5个参数为自定义名称列表
+	local PKG_SPECIAL=${4:-}
+	local PKG_LIST=("$PKG_NAME")
+	local EXTRA_NAMES=()
+
+	# 第5个参数为可选的自定义名称列表
+	if [[ -n "${5:-}" ]]; then
+		read -r -a EXTRA_NAMES <<< "$5"
+		PKG_LIST+=("${EXTRA_NAMES[@]}")
+	fi
 	local REPO_NAME=${PKG_REPO#*/}
 	local REPO_PATH="./package/$REPO_NAME"
+	# 克隆成功后，才允许删除原有软件包
+	git clone --depth=1 --single-branch \
+		--branch "$PKG_BRANCH" \
+		"https://github.com/$PKG_REPO.git" \
+		"$REPO_PATH" || {
+		echo "克隆失败：$PKG_REPO ($PKG_BRANCH)" >&2
+		exit 1
+	}
 
 	echo " "
 
@@ -31,8 +47,6 @@ UPDATE_PACKAGE() {
 		fi
 	done
 
-	# 克隆 GitHub 仓库
-	git clone --depth=1 --single-branch --branch $PKG_BRANCH "https://github.com/$PKG_REPO.git" $REPO_PATH
 
 	# 处理克隆的仓库
 	if [[ "$PKG_SPECIAL" == "pkg" ]]; then
