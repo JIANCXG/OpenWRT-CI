@@ -43,3 +43,8 @@ FIX "natmapt" "$PACKAGE_PATH/luci-app-natmapt" sed -i "s/network/services/g" \
 #修复Rust编译失败
 FIX "rust" "$FEEDS_PATH/packages/lang/rust" sed -i 's/ci-llvm=true/ci-llvm=false/g' \
 	"$FEEDS_PATH/packages/lang/rust/Makefile"
+
+#修复 OpenClash 内置内核下载：变量需经过 OpenWrt Makefile 的两次展开
+FIX "openclash-core" "$PACKAGE_PATH/luci-app-openclash" sed -i \
+	's/\([^$]\)\$\$CORE_ARCH/\1$$$$CORE_ARCH/g' \
+	"$PACKAGE_PATH/luci-app-openclash/Makefile"
